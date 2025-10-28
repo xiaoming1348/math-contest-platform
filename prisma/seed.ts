@@ -1,5 +1,14 @@
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+
+function generateRandomPassword(length = 24) {
+  // hex yields 2 chars per byte — ensure length requested
+  return crypto
+    .randomBytes(Math.ceil(length / 2))
+    .toString("hex")
+    .slice(0, length);
+}
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -16,8 +25,19 @@ async function main() {
   console.log("Organization:", org);
 
   // 2. Create an admin user
-  const adminEmail = "admin@berkeley-math.org";
-  const plainPassword = "admin123";
+  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@berkeley-math.org";
+
+  // Password handling: Prefer SEED_ADMIN_PASSWORD via env. If missing, generate a secure random
+  // password and print it to stdout so the operator can record it. Avoid committing plaintext.
+  const providedPassword = process.env.SEED_ADMIN_PASSWORD;
+  const plainPassword = providedPassword ?? generateRandomPassword(24);
+  if (!providedPassword) {
+    console.warn(
+      "No SEED_ADMIN_PASSWORD provided — generated a random admin password. Save it because it will NOT be committed."
+    );
+    console.log("Generated admin password:", plainPassword);
+  }
+
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   const adminUser = await prisma.user.upsert({
