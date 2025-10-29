@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "../src/lib/db/prisma";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 

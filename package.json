@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-  "seed:build": "tsc -p tsconfig.seed.json",
-  "seed": "pnpm seed:build && node dist-seed/prisma/seed.js",
-  "prisma:generate": "prisma generate",
-  "postinstall": "pnpm prisma:generate"
+  "seed:build": "tsc --project tsconfig.seed.json --outDir dist-seed",
+  "seed": "node dist-seed/prisma/seed.js",
+    "prisma:generate": "prisma generate",
+    "postinstall": "pnpm prisma:generate"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
