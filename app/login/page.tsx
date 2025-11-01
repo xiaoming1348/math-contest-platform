@@ -49,7 +49,19 @@ export default function LoginPage() {
         </button>
       </form>
 
-      {message && <p className="mt-4 text-sm">{message}</p>}
+      {message && (
+        <p className="mt-4 text-sm">
+          {message}
+          {message === "Login success" && (
+            <a
+              href="/dashboard"
+              className="underline text-sm mt-2 inline-block"
+            >
+              Go to my dashboard →
+            </a>
+          )}
+        </p>
+      )}
     </main>
   );
 }

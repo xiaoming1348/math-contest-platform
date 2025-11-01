@@ -53,7 +53,7 @@ export default function CreateUserForm() {
       <select
         className="border p-2 rounded w-full"
         value={role}
-        onChange={(e) => setRole(e.target.value as any)}
+        onChange={(e) => setRole(e.target.value as "TEACHER" | "STUDENT")}
       >
         <option value="TEACHER">TEACHER</option>
         <option value="STUDENT">STUDENT</option>

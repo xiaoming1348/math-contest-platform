@@ -63,3 +63,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
 }
+
+// Admin-only org-scoped users list
+export async function GET() {
+  const sessionUser = await getSessionUser();
+  if (!sessionUser) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+  const allowed: Role[] = ["ADMIN"];
+  if (!hasRole(sessionUser.role, allowed)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  // Org-scoped list (no cross-org)
+  const users = await prisma.user.findMany({
+    where: { organizationId: sessionUser.organizationId },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      role: true,
+      organizationId: true,
+      createdByUserId: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    orderBy: [{ role: "asc" }, { createdAt: "desc" }],
+  });
+
+  return NextResponse.json({ ok: true, users });
+}
